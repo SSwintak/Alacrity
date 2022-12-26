@@ -25,7 +25,7 @@
 //#include "Hash.h"
 
 #include "PrecompiledHeader.h"
-#include "imgui-docking/imgui.h"
+#include "Alacrity/Dependencies/vendor/imgui-docking/imgui.h"
 
 
 using namespace MATH;

@@ -1,8 +1,8 @@
 #include "PrecompiledHeader.h"
 #include "UIManager.h"
 
-#include "imgui-docking/backends/imgui_impl_sdl.h"
-#include "imgui-docking/backends/imgui_impl_vulkan.h"
+#include "Alacrity/Dependencies/vendor/imgui-docking/backends/imgui_impl_sdl.h"
+#include "Alacrity/Dependencies/vendor/imgui-docking/backends/imgui_impl_vulkan.h"
 
 
 

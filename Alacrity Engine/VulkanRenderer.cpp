@@ -2,10 +2,10 @@
 #include "VulkanRenderer.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
+#include "Alacrity/Dependencies/tiny_obj_loader.h"
 
-#include "imgui-docking/backends/imgui_impl_sdl.h"
-#include "imgui-docking/backends/imgui_impl_vulkan.h"
+#include "Alacrity/Dependencies/vendor/imgui-docking/backends/imgui_impl_sdl.h"
+#include "Alacrity/Dependencies/vendor/imgui-docking/backends/imgui_impl_vulkan.h"
 
 static void check_vk_result(VkResult err)
 {
@@ -367,7 +367,7 @@ void VulkanRenderer::recreateSwapChain() {
     createImageViews();
     createRenderPass();
     
-    createGraphicsPipeline("shaders/drawNormals.vert.spv", "shaders/drawNormals.frag.spv", "shaders/drawNormals.geom.spv", graphicsPipelines[2], true);
+    createGraphicsPipeline("shaders/drawNormals.vert.spv", "shaders/drawNormals.frag.spv", "/shaders/drawNormals.geom.spv", graphicsPipelines[2], true);
     createGraphicsPipeline("shaders/phong.vert.spv", "shaders/phong.frag.spv", nullptr, graphicsPipelines[0], true);
     createGraphicsPipeline("shaders/phong.vert.spv", "shaders/phong.frag.spv", nullptr, graphicsPipelines[1], true);
     
@@ -1853,6 +1853,7 @@ std::vector<char> VulkanRenderer::readFile(const std::string& filename) {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
     if (!file.is_open()) {
+        printf("File %s cannot open!\n", filename.c_str());
         throw std::runtime_error("failed to open file!");
     }
 

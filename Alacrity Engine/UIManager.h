@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imgui-docking/imgui.h"
+#include "Alacrity/Dependencies/vendor/imgui-docking/imgui.h"
 #include "VulkanRenderer.h"
 
 class UIManager

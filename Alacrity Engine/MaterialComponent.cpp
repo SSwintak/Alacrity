@@ -1,5 +1,5 @@
 
-#include "Alacrity/Dependencies/vendor/SDL/include/SDL_image.h"
+#include <SDL_image.h>
 #include "MaterialComponent.h"
 
 MaterialComponent::MaterialComponent(Component* parent_,const char* filename_):Component(parent_),textureID(0) {
