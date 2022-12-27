@@ -22,6 +22,9 @@
     <Filter Include="Resource Files\imgui">
       <UniqueIdentifier>{bde01b76-f133-46df-86d6-c7de871865a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\imgui\imguizmo">
+      <UniqueIdentifier>{6a958ed1-c73c-46e7-8815-b045625b57f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\VulkanRenderer.cpp">
@@ -107,6 +110,21 @@
     </ClCompile>
     <ClCompile Include="..\Alacrity\Dependencies\vendor\imgui-docking\backends\imgui_impl_vulkan.cpp">
       <Filter>Resource Files\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\GraphEditor.cpp">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImCurveEdit.cpp">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImGradient.cpp">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImGuizmo.cpp">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImSequencer.cpp">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -227,21 +245,39 @@
     <ClInclude Include="..\Alacrity\Dependencies\vendor\imgui-docking\backends\imgui_impl_vulkan.h">
       <Filter>Resource Files\imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\GraphEditor.h">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImCurveEdit.h">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImGradient.h">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImGuizmo.h">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImSequencer.h">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImZoomSlider.h">
+      <Filter>Resource Files\imgui\imguizmo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Alacrity\shaders\drawNormals.frag">
+    <None Include="shaders\drawNormals.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Alacrity\shaders\drawNormals.geom">
+    <None Include="shaders\drawNormals.geom">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Alacrity\shaders\drawNormals.vert">
+    <None Include="shaders\drawNormals.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Alacrity\shaders\phong.frag">
+    <None Include="shaders\phong.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\Alacrity\shaders\phong.vert">
+    <None Include="shaders\phong.vert">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

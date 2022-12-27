@@ -6,6 +6,7 @@
 
 #include "Alacrity/Dependencies/vendor/imgui-docking/backends/imgui_impl_sdl.h"
 #include "Alacrity/Dependencies/vendor/imgui-docking/backends/imgui_impl_vulkan.h"
+#include "Alacrity/Dependencies/vendor/ImGuizmo/ImGuizmo.h"
 
 static void check_vk_result(VkResult err)
 {
@@ -367,7 +368,7 @@ void VulkanRenderer::recreateSwapChain() {
     createImageViews();
     createRenderPass();
     
-    createGraphicsPipeline("shaders/drawNormals.vert.spv", "shaders/drawNormals.frag.spv", "/shaders/drawNormals.geom.spv", graphicsPipelines[2], true);
+    createGraphicsPipeline("shaders/drawNormals.vert.spv", "shaders/drawNormals.frag.spv", "shaders/drawNormals.geom.spv", graphicsPipelines[2], true);
     createGraphicsPipeline("shaders/phong.vert.spv", "shaders/phong.frag.spv", nullptr, graphicsPipelines[0], true);
     createGraphicsPipeline("shaders/phong.vert.spv", "shaders/phong.frag.spv", nullptr, graphicsPipelines[1], true);
     
@@ -1451,7 +1452,7 @@ void VulkanRenderer::SetModelPushConst(const Matrix4& model)
 {
     PROFILE_FUNCTION();
     //PROFILE_SCOPE("SetModel PushConstant");
-    ModelPushConst[0].render_mat4 = model;
+    //ModelPushConst[0].render_mat4 = model;
     ModelPushConst[0].normal_mat4 = MMath::transpose(MMath::inverse(ModelPushConst[0].render_mat4));
 
     //ModelPushConst[1].render_mat4 = model * MMath::translate(4.0f, 0.0f, 0.0f);// rotates along the first models origin
@@ -1476,7 +1477,14 @@ void VulkanRenderer::updateCommandBuffer()
     // these probably shouldn't be static
     static bool Show_Demo_Window = false;
     static bool show_another_window = false;
-    static bool show_normals = false;    
+    static bool show_normals = false;
+    //imguizo setup
+    static ImGuizmo::MODE currentMode(ImGuizmo::LOCAL);
+    static ImGuizmo::OPERATION currentGizmoOperation(ImGuizmo::TRANSLATE);
+    static float bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
+    static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
+    static bool boundSizing = false;
+    static float snap[3] = { 1.0f, 1.0f, 1.0f };
 
     for (size_t i = 0; i < commandBuffers.size(); i++) {
         VkRenderPassBeginInfo renderPassInfo{};
@@ -1564,28 +1572,32 @@ void VulkanRenderer::updateCommandBuffer()
                 vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipelines[2]);
                 vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indexArray[1].size()), 1, 0, 0, 0);
             }
-        }
+        }        
 
         // imgui window creation
         {
             PROFILE_SCOPE("updateCommandBuffer Imgui Window Creation");
+
+            currentGizmoOperation = ImGuizmo::TRANSLATE;
+            currentMode = ImGuizmo::LOCAL;
+
             ImGui_ImplVulkan_NewFrame();
             ImGui_ImplSDL2_NewFrame();
             ImGui::NewFrame();
+            ImGuizmo::BeginFrame();
+            ImGuizmo::Enable(true);
 
             // for initial testing
             if (Show_Demo_Window)
             {
                 ImGui::ShowDemoWindow(&Show_Demo_Window);
                 //ImGui::SetWindowSize(ImVec2(100, 100));
-            }
-            static float f = 0.0f;
-            static int counter = 0;
+            }            
 
             // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
             {
                 static float f = 0.0f;
-                static int counter = 0;
+                static int counter = 0;                
 
                 ImGui::Begin("Main Window");                              // Create a window called "Hello, world!" and append into it.
 
@@ -1597,7 +1609,7 @@ void VulkanRenderer::updateCommandBuffer()
 
                 ImGui::Separator();
 
-                ImGui::SliderFloat("Model Position", &f, 0.0f, 1.0f);     // Edit 1 float using a slider from 0.0f to 1.0f
+                //ImGui::SliderFloat("Model Position", &f, 0.0f, 1.0f);     // Edit 1 float using a slider from 0.0f to 1.0f
                 ImGui::ColorEdit3("clear color", (float*)(&clear_color)); // Edit 3 floats representing a color
                 ImGui::ColorEdit3("light1 color", (float*)(&LT_ubo.lightColor[0]));
                 ImGui::ColorEdit3("light2 color", (float*)(&LT_ubo.lightColor[1]));
@@ -1608,6 +1620,20 @@ void VulkanRenderer::updateCommandBuffer()
                 ImGui::Separator();
                 
                 ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+                int windowX;
+                int windowY;
+                SDL_GetWindowPosition(window.window, &windowX, &windowY);
+                //imguizmo draw
+                ImGuizmo::SetOrthographic(false);                
+                ImGuizmo::SetRect((float)windowX, (float)windowY, (float)window.windowWidth, (float)window.windowHeight);
+                //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
+
+                //ImGuizmo::DrawGrid((float*)ubo.view, (float*)ubo.proj, (float*)Matrix4(), 100.0f);
+                //ImGuizmo::DrawCubes((float*)ubo.view, (float*)ubo.proj, (float*)ModelPushConst[0].render_mat4, 1);
+                ImGuizmo::Manipulate((float*)ubo.view, (float*)ubo.proj, ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, (float*)ModelPushConst[0].render_mat4);
+                //ImGuizmo::ViewManipulate((float*)ubo.view, -10.0f, ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(),ImGui::GetWindowPos().y), ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), 0x10101010);
+                
                 ImGui::End();
 
                 ImGui::Begin("Profiler");

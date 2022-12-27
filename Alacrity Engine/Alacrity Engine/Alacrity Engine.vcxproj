@@ -162,6 +162,21 @@
     <ClCompile Include="..\Alacrity\Dependencies\vendor\imgui-docking\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\GraphEditor.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImCurveEdit.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImGradient.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImGuizmo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImSequencer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Camera.cpp" />
     <ClCompile Include="..\Controller.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
@@ -211,6 +226,12 @@
     <ClInclude Include="..\Alacrity\Dependencies\vendor\imgui-docking\imstb_rectpack.h" />
     <ClInclude Include="..\Alacrity\Dependencies\vendor\imgui-docking\imstb_textedit.h" />
     <ClInclude Include="..\Alacrity\Dependencies\vendor\imgui-docking\imstb_truetype.h" />
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\GraphEditor.h" />
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImCurveEdit.h" />
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImGradient.h" />
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="..\Alacrity\Dependencies\vendor\ImGuizmo\ImZoomSlider.h" />
     <ClInclude Include="..\AxisAngle.h" />
     <ClInclude Include="..\Camera.h" />
     <ClInclude Include="..\Component.h" />
@@ -242,11 +263,11 @@
     <ClInclude Include="..\VulkanRenderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Alacrity\shaders\drawNormals.frag" />
-    <None Include="..\Alacrity\shaders\drawNormals.geom" />
-    <None Include="..\Alacrity\shaders\drawNormals.vert" />
-    <None Include="..\Alacrity\shaders\phong.frag" />
-    <None Include="..\Alacrity\shaders\phong.vert" />
+    <None Include="shaders\drawNormals.frag" />
+    <None Include="shaders\drawNormals.geom" />
+    <None Include="shaders\drawNormals.vert" />
+    <None Include="shaders\phong.frag" />
+    <None Include="shaders\phong.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
