@@ -1,6 +1,4 @@
 #include "TransformComponent.h"
-#include "MMath.h"
-#include "QMath.h"
 using namespace MATH;
 
 TransformComponent::TransformComponent(Component* parent_, Vec3 pos_, Quaternion orientation_, Vec3 scale_):Component(parent_) {

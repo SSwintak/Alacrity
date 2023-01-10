@@ -37,6 +37,22 @@ void operator delete(void* memLoc, std::size_t amount)
 
 }
 
+void operator delete[](void* memLoc, std::size_t amount)
+{
+	--allocations[0];
+	Alloc_Memory[0] -= amount;
+
+	if (Alloc_Memory[0] < 100)
+	{
+		std::cout << typeid(amount).name() << ": FREEING " << amount << " Bytes of Memory\n";
+		std::cout << "Total Memory: " << Alloc_Memory[0] << " Bytes\n";
+		std::cout << "Total Allocations: " << allocations[0] << "\n";
+	}
+
+	free(memLoc);
+
+}
+
 int main(int argc, char* args[]) {
 /***	
 #pragma warning(disable : 4996) 

@@ -166,6 +166,9 @@ DocProject/Help/*.hhp
 DocProject/Help/Html2
 DocProject/Help/html
 
+#JSON files
+*.json
+
 # Click-Once directory
 publish/
 

@@ -138,6 +138,10 @@ struct BufferMemory
 
 struct ModelMatPushConstants
 {  
+    /*Matrix4 transformMatrix;
+    Vec3 translation;
+    Vec3 rotation;
+    Vec3 scale;*/
     Matrix4 render_mat4;
     Matrix4 normal_mat4;
 };
@@ -180,7 +184,7 @@ public:
     void OnDestroy();
     void Render();
     void SetCameraUBO(const Matrix4& projection, const Matrix4& view);
-    void SetModelPushConst(const Matrix4& model);
+    void SetModelPushConst(const Matrix4& Transform);
     void SetLightUBO(const Vec4& lightPos1, const Vec4& lightPos2);
     SDL_Window* GetWindow() { return window.window; }
     ImDrawData* draw_data;

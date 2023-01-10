@@ -8,6 +8,8 @@
 #include "Alacrity/Dependencies/vendor/imgui-docking/backends/imgui_impl_vulkan.h"
 #include "Alacrity/Dependencies/vendor/ImGuizmo/ImGuizmo.h"
 
+
+
 static void check_vk_result(VkResult err)
 {
     if (err == 0)
@@ -237,7 +239,7 @@ void VulkanRenderer::initVulkan() {
     createGraphicsPipeline("shaders/drawNormals.vert.spv", "shaders/drawNormals.frag.spv", "shaders/drawNormals.geom.spv", graphicsPipelines[2], true);
     createGraphicsPipeline("shaders/phong.vert.spv", "shaders/phong.frag.spv", nullptr, graphicsPipelines[0], true);
     createGraphicsPipeline("shaders/phong.vert.spv", "shaders/phong.frag.spv", nullptr, graphicsPipelines[1], true);
-   
+    
     createCommandPool();
     createDepthResources();
     createFramebuffers();
@@ -1448,16 +1450,22 @@ void VulkanRenderer::SetCameraUBO(const Matrix4& projection, const Matrix4& view
     ubo.view = view;    
 }
 
-void VulkanRenderer::SetModelPushConst(const Matrix4& model)
+void VulkanRenderer::SetModelPushConst(const Matrix4& Transform)
 {
     PROFILE_FUNCTION();
     //PROFILE_SCOPE("SetModel PushConstant");
-    //ModelPushConst[0].render_mat4 = model;
+    //ModelPushConst[0].render_mat4 = Transform;
     ModelPushConst[0].normal_mat4 = MMath::transpose(MMath::inverse(ModelPushConst[0].render_mat4));
+    /*ModelPushConst[0].translation = Translation;
+    ModelPushConst[0].rotation = Rotation;
+    ModelPushConst[0].scale = Scale;*/
 
-    //ModelPushConst[1].render_mat4 = model * MMath::translate(4.0f, 0.0f, 0.0f);// rotates along the first models origin
-    ModelPushConst[1].render_mat4 = MMath::translate(-6.0f, 0.0f, (6.0f * -1.0f)) * model;// rotates along its own origin
-    ModelPushConst[1].normal_mat4 = MMath::transpose(MMath::inverse(ModelPushConst[1].render_mat4));        
+    //ModelPushConst[1].render_mat4 = Transform * MMath::translate(4.0f, 0.0f, 0.0f);// rotates along the first models origin
+    ModelPushConst[1].render_mat4 = MMath::translate(-6.0f, 0.0f, (6.0f * -1.0f)) * Transform;// rotates along its own origin
+    ModelPushConst[1].normal_mat4 = MMath::transpose(MMath::inverse(ModelPushConst[1].render_mat4));
+    /*ModelPushConst[1].translation = Translation;
+    ModelPushConst[1].rotation = Rotation;
+    ModelPushConst[1].scale = Scale;*/
 }
 
 void VulkanRenderer::SetLightUBO(const Vec4& lightPos1, const Vec4& lightPos2)
@@ -1485,6 +1493,8 @@ void VulkanRenderer::updateCommandBuffer()
     static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
     static bool boundSizing = false;
     static float snap[3] = { 1.0f, 1.0f, 1.0f };
+   
+    IM_ASSERT(true);
 
     for (size_t i = 0; i < commandBuffers.size(); i++) {
         VkRenderPassBeginInfo renderPassInfo{};
@@ -1577,6 +1587,7 @@ void VulkanRenderer::updateCommandBuffer()
         // imgui window creation
         {
             PROFILE_SCOPE("updateCommandBuffer Imgui Window Creation");
+            
 
             currentGizmoOperation = ImGuizmo::TRANSLATE;
             currentMode = ImGuizmo::LOCAL;
@@ -1586,7 +1597,6 @@ void VulkanRenderer::updateCommandBuffer()
             ImGui::NewFrame();
             ImGuizmo::BeginFrame();
             ImGuizmo::Enable(true);
-
             // for initial testing
             if (Show_Demo_Window)
             {
@@ -1596,26 +1606,24 @@ void VulkanRenderer::updateCommandBuffer()
 
             // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
             {
-                static float f = 0.0f;
-                static int counter = 0;                
-
-                ImGui::Begin("Main Window");                              // Create a window called "Hello, world!" and append into it.
+                
+                ImGui::Begin("Main Window");                                                   // Create a window called "Hello, world!" and append into it.
 
                 ImGui::Text("The Demo Window Increases compute time... ugh.");                 // Display some text (you can use a format strings too)
-                ImGui::Checkbox("Demo Window", &Show_Demo_Window);        // Edit bools storing our window open/close state
+                ImGui::Checkbox("Demo Window", &Show_Demo_Window);                             // Edit bools storing our window open/close state
                 ImGui::Checkbox("Another Window", &show_another_window);
                 ImGui::Checkbox("Normals On/Off", &show_normals);
                 //ImGui::Checkbox("Batman/Skull", &);
 
                 ImGui::Separator();
-
-                //ImGui::SliderFloat("Model Position", &f, 0.0f, 1.0f);     // Edit 1 float using a slider from 0.0f to 1.0f
-                ImGui::ColorEdit3("clear color", (float*)(&clear_color)); // Edit 3 floats representing a color
+                                                       
+                ImGui::ColorEdit3("clear color", (float*)(&clear_color));                      // Edit 3 floats representing a color
                 ImGui::ColorEdit3("light1 color", (float*)(&LT_ubo.lightColor[0]));
                 ImGui::ColorEdit3("light2 color", (float*)(&LT_ubo.lightColor[1]));
                 ImGui::SliderFloat3("lightPos1", (float*)&LT_ubo.lightPos[0], -50.0f, 50.0f);
                 ImGui::SliderFloat3("lightPos2", (float*)&LT_ubo.lightPos[1], -50.0f, 50.0f);
-                ImGui::ColorEdit3("normal color1", (float*)(&LT_ubo.normalColor[0]));
+                ImGui::ColorEdit3("normal color1", (float*)(&LT_ubo.normalColor[0]));               
+                //ImGui::Spacing();
                                 
                 ImGui::Separator();
                 
@@ -1624,16 +1632,34 @@ void VulkanRenderer::updateCommandBuffer()
                 int windowX;
                 int windowY;
                 SDL_GetWindowPosition(window.window, &windowX, &windowY);
+
                 //imguizmo draw
                 ImGuizmo::SetOrthographic(false);                
                 ImGuizmo::SetRect((float)windowX, (float)windowY, (float)window.windowWidth, (float)window.windowHeight);
                 //ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 
                 //ImGuizmo::DrawGrid((float*)ubo.view, (float*)ubo.proj, (float*)Matrix4(), 100.0f);
-                //ImGuizmo::DrawCubes((float*)ubo.view, (float*)ubo.proj, (float*)ModelPushConst[0].render_mat4, 1);
-                ImGuizmo::Manipulate((float*)ubo.view, (float*)ubo.proj, ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, (float*)ModelPushConst[0].render_mat4);
+                //ImGuizmo::DrawCubes((float*)ubo.view, (float*)ubo.proj, (float*)ModelPushConst[0].render_mat4, 1);                
+                
                 //ImGuizmo::ViewManipulate((float*)ubo.view, -10.0f, ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowWidth(),ImGui::GetWindowPos().y), ImVec2(ImGui::GetWindowWidth(), ImGui::GetWindowHeight()), 0x10101010);
                 
+                ImGui::End();
+
+                ImGui::Begin("Model Transform");
+
+                float matTrans[3]{};
+                float matRot[3]{}; 
+                float matScale[3]{};
+                ImGuizmo::DecomposeMatrixToComponents(ModelPushConst[0].render_mat4, matTrans, matRot, matScale);                
+
+                ImGui::DragFloat3("Translate", matTrans, 0.01f);
+                ImGui::DragFloat3("Rotate", matRot, 0.01f);
+                ImGui::DragFloat3("Scale", matScale, 0.01f);
+
+                ImGuizmo::RecomposeMatrixFromComponents(matTrans, matRot, matScale, ModelPushConst[0].render_mat4);
+
+                ImGuizmo::Manipulate((float*)ubo.view, (float*)ubo.proj, ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, (float*)ModelPushConst[0].render_mat4);
+
                 ImGui::End();
 
                 ImGui::Begin("Profiler");
@@ -1658,13 +1684,14 @@ void VulkanRenderer::updateCommandBuffer()
                 if (ImGui::Button("Close Me"))
                     show_another_window = false;
                 ImGui::End();
-            }
+            }             
+            
         }
 
         //Imgui Render
         {
             PROFILE_SCOPE("updateCommandBuffer Imgui Render");
-
+            
             ImGui::Render();
             draw_data = ImGui::GetDrawData();
             if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

@@ -14,6 +14,8 @@ Scene0::Scene0(Renderer *renderer_):
 	camera = new Camera();
 	UI = new UIManager();
 	controller = new Controller(0);
+	Model[0] = new Actor(nullptr);
+	Model[1] = new Actor(nullptr);
 	
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
 }
@@ -22,7 +24,11 @@ Scene0::~Scene0() {
 	if (camera) delete camera;
 	if (UI) delete UI;
 	if (controller) delete controller;
-	
+	Model[0]->RemoveAllComponents();
+	Model[1]->RemoveAllComponents();
+	if (Model[0]) delete Model[0];
+	if (Model[1]) delete Model[1];
+		
 	if(AudioEngine) AudioEngine->drop();// delete the engine
 
 }
@@ -47,6 +53,9 @@ bool Scene0::OnCreate() {
 		//models.emplace("Batman", Matrix4());
 		//models.emplace("Skull", Matrix4());
 
+		Model[0]->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), Quaternion());
+		Model[1]->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), Quaternion());		
+
 		AudioEngine = irrklang::createIrrKlangDevice();// create the engine
 		if (!AudioEngine)
 		{
@@ -54,11 +63,9 @@ bool Scene0::OnCreate() {
 			return false;// failed to start the engine
 		}
 
-		// SOUND !!!!!!!!!!!!																	// SOUND !!!!!!!!!!!!!
-		//irrklang::ISound* music = AudioEngine->play2D("media/BatmanTheme.wav", false, false, true);// (TODO): multithread
+		// SOUND !!!!!!!!!!!!																	// SOUND !!!!!!!!!!!!!		
 		th_sound = std::thread(&Scene0::soundFunc, this);
-		th_sound.join();
-		//music->setVolume(0.25f);
+		th_sound.join();	
 
 		break;
 
@@ -189,13 +196,13 @@ void Scene0::GetControllerEvents()
 			//joystick deadzone
 			if (xinput_state.Gamepad.sThumbLX > 0)
 			{				
-				ModelMatrix[0] = MMath::rotate(time * 90.0f, Vec3(0.0f, 1.0f, 0.0f));
-				ModelMatrix[1] = MMath::rotate(time * 90.0f, Vec3(0.0f, 1.0f, 0.0f));
+				Model[0]->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(time * 50.0f, Vec3(0.0f, 1.0f, 0.0f)));
+				Model[1]->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(time * 50.0f, Vec3(0.0f, 1.0f, 0.0f)));				
 			}
 			else if (xinput_state.Gamepad.sThumbLX < 0)
 			{
-				ModelMatrix[0] = MMath::rotate(-time * 90.0f, Vec3(0.0f, 1.0f, 0.0f));
-				ModelMatrix[1] = MMath::rotate(-time * 90.0f, Vec3(0.0f, 1.0f, 0.0f));
+				Model[0]->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(-time * 50.0f, Vec3(0.0f, 1.0f, 0.0f)));
+				Model[1]->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(-time * 50.0f, Vec3(0.0f, 1.0f, 0.0f)));
 			}
 		}
 		
@@ -212,25 +219,25 @@ void Scene0::Update(const float deltaTime) {
 	
 	time += deltaTime;
 	if (!controller->IsConnected())
-	{
-		//static float elapsedTime = 0.0f;
-		//elapsedTime += deltaTime;
-		ModelMatrix[0] = MMath::rotate(time * 90.0f, Vec3(0.0f, 1.0f, 0.0f));
-		ModelMatrix[1] = MMath::rotate(time * 90.0f, Vec3(0.0f, 1.0f, 0.0f));
+	{				
+		Model[0]->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(time * 50.0f, Vec3(0.0f, 1.0f, 0.0f)));
+		Model[1]->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(time * 50.0f, Vec3(0.0f, 1.0f, 0.0f)));			
 	}
 }
 
 void Scene0::Render() const {
 	PROFILE_FUNCTION();
 
+	auto m0_TC = Model[0]->GetComponent<TransformComponent>();
+	auto m1_TC = Model[1]->GetComponent<TransformComponent>();
 	switch (renderer->getRendererType()) {
 
 	case RendererType::VULKAN:
 		VulkanRenderer* vRenderer;
 		vRenderer = dynamic_cast<VulkanRenderer*>(renderer);
 		vRenderer->SetCameraUBO(camera->GetProjectionMatrix(), camera->GetViewMatrix());
-		vRenderer->SetModelPushConst(ModelMatrix[0]);		
-		vRenderer->SetModelPushConst(ModelMatrix[1]);
+		vRenderer->SetModelPushConst(m0_TC->GetTransformMatrix());
+		vRenderer->SetModelPushConst(m1_TC->GetTransformMatrix());
 		vRenderer->SetLightUBO(Vec4(-10.0f, 0.0f, -10.0f, 0.0f), Vec4(10.0f, 0.0f, -10.0f, 0.0f));
 
 		// imgui functions from a UI class or manager?

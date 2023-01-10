@@ -41,6 +41,10 @@
 #include "Hash.h"
 #include "Sphere.h"
 #include "ProfilerTimer.h"
+#include "Actor.h"
+#include "MaterialComponent.h"
+#include "MeshComponent.h"
+#include "TransformComponent.h"
 
 //external dependencies
 
@@ -72,3 +76,5 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+

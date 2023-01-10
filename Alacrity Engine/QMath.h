@@ -22,6 +22,7 @@ namespace MATH{
 		static  Euler fromQuaternion(const Quaternion& q);
 		static  Matrix3 toMatrix3(const Quaternion& q);
 		static  Matrix4 toMatrix4(const Quaternion& q);
+		static Quaternion toQuaternion(const Matrix4& mat4);
 
 		/// Not needed after C17
 		//static float clamp(float x, float minVal, float maxVal) { return std::min(std::max(x, minVal), maxVal); }

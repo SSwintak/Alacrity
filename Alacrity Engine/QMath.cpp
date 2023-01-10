@@ -80,6 +80,7 @@ Matrix4 QMath::toMatrix4(const Quaternion& q) {
 	//return m1 * m2;
 
 }
+
 Quaternion QMath::angleAxisRotation(const float degrees, const Vec3& axis) {
 	Vec3 rotationAxis = VMath::normalize(axis);
 	float theta = degrees * DEGREES_TO_RADIANS;

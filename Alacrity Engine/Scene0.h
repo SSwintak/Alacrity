@@ -20,8 +20,8 @@ class Scene0 : public Scene {
 private:
 	Renderer *renderer;
 	Camera *camera;
-	MovableCamera* movableCamera;
-	Matrix4 ModelMatrix[2];
+	MovableCamera* movableCamera;	
+	Actor* Model[2];
 	
 	
 	//ModelName, Model (WIP)

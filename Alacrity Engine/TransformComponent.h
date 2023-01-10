@@ -1,14 +1,15 @@
 #pragma once
 #include "Component.h"
 #include "Matrix.h"
-#include "Quaternion.h"
+#include "QMath.h"
+#include "MMath.h"
 using namespace MATH;
 
 class TransformComponent : public Component {
 private:
 	Vec3 pos;
 	Vec3 scale;
-	Quaternion orientation;
+    Quaternion orientation;
 
 public:
 	//TransformComponent(Component* parent_);
@@ -27,8 +28,9 @@ public:
 		orientation = orientation_;
 		scale = scale_;
 	}
-	void SetOrientation(Quaternion orientation_) { orientation = orientation_; }
+	void SetOrientation(Quaternion orientation_) { orientation = orientation_; }	
 	void SetPosition(Vec3 pos_) { pos = pos_; }
 	Matrix4 GetTransformMatrix() const;
+	
 };
 
